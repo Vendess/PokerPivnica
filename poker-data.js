@@ -7,7 +7,7 @@
 // 3. Skopíruj odkaz a vlož ho nižšie do SHEET_CSV_URL
 // ============================================================
 
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRMylc1_pDxRYj1YbYjGnk9OeBa2f2coxDthOCFoc5Nn0eCVV_QAldXBOrQTV3J8Ef8Ok2JpU4kjz9A/pubhtml";
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRMylc1_pDxRYj1YbYjGnk9OeBa2f2coxDthOCFoc5Nn0eCVV_QAldXBOrQTV3J8Ef8Ok2JpU4kjz9A/pub?output=csv";
 
 // Jednoduchý CSV parser, zvláda aj úvodzovky okolo hodnôt s čiarkou
 function parseCSV(text) {
