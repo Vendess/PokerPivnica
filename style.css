@@ -1,17 +1,26 @@
 :root{
-  --bg: #f7f7f5;
-  --border: #e0e0dc;
-  --text: #1c1c1a;
-  --text-dim: #6b6b66;
-  --accent: #1a6b4a;
-  --row-alt: #f0efeb;
+  --felt: #0b3d2e;
+  --felt-deep: #072b20;
+  --card-bg: #fbf8f0;
+  --border: #ddd3ba;
+  --text: #241f14;
+  --text-dim: #756c56;
+  --gold: #c9a227;
+  --gold-dark: #96771a;
+  --header-bg: #0e4433;
+  --row-alt: #f1ead9;
+  --suit-red: #b3272d;
 }
 
 *{ box-sizing: border-box; }
 
 body{
   margin: 0;
-  background: var(--bg);
+  background:
+    radial-gradient(circle at 12% -10%, #124a37 0%, transparent 55%),
+    radial-gradient(circle at 92% 0%, #0d4433 0%, transparent 45%),
+    var(--felt);
+  background-attachment: fixed;
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   padding: 40px 16px 80px;
@@ -26,10 +35,22 @@ h1{
   font-size: 26px;
   font-weight: 700;
   margin: 0 0 4px;
+  color: #f3efe1;
+  letter-spacing: 0.01em;
+}
+
+h1::before{
+  content: "♠ ";
+  color: var(--gold);
+}
+
+h1::after{
+  content: " ♣";
+  color: var(--gold);
 }
 
 .sub{
-  color: var(--text-dim);
+  color: #c9c2ac;
   font-size: 14px;
   margin: 0 0 20px;
 }
@@ -38,6 +59,7 @@ nav{
   display: flex;
   gap: 8px;
   margin-bottom: 24px;
+  flex-wrap: wrap;
 }
 
 nav a{
@@ -45,22 +67,25 @@ nav a{
   font-size: 14px;
   padding: 7px 14px;
   border-radius: 6px;
-  border: 1px solid var(--border);
-  color: var(--text);
+  border: 1px solid rgba(243,239,225,0.25);
+  color: #f3efe1;
+  background: rgba(255,255,255,0.04);
 }
 
 nav a.active{
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #241f14;
+  font-weight: 600;
 }
 
 .table-scroll{
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: auto;
   max-height: 70vh;
-  background: #fff;
+  background: var(--card-bg);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
 }
 
 table{
@@ -72,8 +97,8 @@ table{
 thead th{
   position: sticky;
   top: 0;
-  background: var(--text);
-  color: #fff;
+  background: var(--header-bg);
+  color: #f3efe1;
   text-align: left;
   padding: 10px 12px;
   font-weight: 600;
@@ -90,15 +115,15 @@ tbody td{
 
 tbody tr:nth-child(even){ background: var(--row-alt); }
 
-tbody tr:hover{ background: #e8f1ec; }
+tbody tr:hover{ background: #e9dfc0; }
 
-td.gold{ color: var(--accent); font-weight: 700; }
+td.gold{ color: var(--gold-dark); font-weight: 700; }
 
 td.rank{ color: var(--text-dim); font-variant-numeric: tabular-nums; }
 
 footer{
   text-align: center;
-  color: var(--text-dim);
+  color: #c9c2ac;
   font-size: 12px;
   margin-top: 20px;
 }
