@@ -7,7 +7,7 @@
 // 3. Skopíruj odkaz a vlož ho nižšie do SHEET_CSV_URL
 // ============================================================
 
-const SHEET_CSV_URL = "PASTE_YOUR_PUBLISHED_CSV_LINK_HERE";
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRMylc1_pDxRYj1YbYjGnk9OeBa2f2coxDthOCFoc5Nn0eCVV_QAldXBOrQTV3J8Ef8Ok2JpU4kjz9A/pub?output=csv";
 
 // Zistí, či Google Sheets exportoval CSV s čiarkou alebo bodkočiarkou ako oddeľovačom
 // (slovenská lokalizácia zvyčajne používa bodkočiarku, lebo čiarka je desatinná bodka)
