@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
-  <link rel="icon" type="image/x-icon" href="pokpiv.ico">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rebríček hráčov – Poker Pivnica</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rebríček hráčov – Poker Pivnica1</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -35,44 +34,58 @@
     </table>
   </div>
 
-  <footer>Automaticky generované</footer>
+  <footer>Počítané automaticky zo všetkých večerov v Google Sheete</footer>
 </div>
 
-<script src="data.js"></script>
+<script src="poker-data.js"></script>
 <script>
-  const players = {};
-
-  weeks.forEach(week => {
-    week.results.forEach(r => {
-      if (!players[r.name]){
-        players[r.name] = { name: r.name, total: 0, played: 0, first: 0, second: 0, third: 0 };
-      }
-      players[r.name].total += r.prize;
-      players[r.name].played += 1;
-      if (r.place === 1) players[r.name].first += 1;
-      if (r.place === 2) players[r.name].second += 1;
-      if (r.place === 3) players[r.name].third += 1;
-    });
-  });
-
-  const ranked = Object.values(players).sort((a, b) => b.total - a.total);
-
+  const tbody = document.getElementById('rows');
   function formatEUR(n){ return n.toLocaleString('sk-SK') + ' €'; }
 
-  const tbody = document.getElementById('rows');
-  ranked.forEach((p, i) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td class="rank">${i + 1}</td>
-      <td>${p.name}</td>
-      <td class="num">${p.played}</td>
-      <td class="num">${p.first}</td>
-      <td class="num">${p.second}</td>
-      <td class="num">${p.third}</td>
-      <td class="num gold">${formatEUR(p.total)}</td>
-    `;
-    tbody.appendChild(tr);
-  });
+  tbody.innerHTML = `<tr><td colspan="7">Načítavam...</td></tr>`;
+
+  loadWeeks()
+    .then(weeks => {
+      const players = {};
+
+      weeks.forEach(week => {
+        week.results.forEach(r => {
+          if (!players[r.name]){
+            players[r.name] = { name: r.name, total: 0, played: 0, first: 0, second: 0, third: 0 };
+          }
+          players[r.name].total += r.prize;
+          players[r.name].played += 1;
+          if (r.place === 1) players[r.name].first += 1;
+          if (r.place === 2) players[r.name].second += 1;
+          if (r.place === 3) players[r.name].third += 1;
+        });
+      });
+
+      const ranked = Object.values(players).sort((a, b) => b.total - a.total);
+      tbody.innerHTML = "";
+
+      if (ranked.length === 0){
+        tbody.innerHTML = `<tr><td colspan="7">Zatiaľ žiadni hráči.</td></tr>`;
+        return;
+      }
+
+      ranked.forEach((p, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="rank">${i + 1}</td>
+          <td>${p.name}</td>
+          <td class="num">${p.played}</td>
+          <td class="num">${p.first}</td>
+          <td class="num">${p.second}</td>
+          <td class="num">${p.third}</td>
+          <td class="num gold">${formatEUR(p.total)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    })
+    .catch(err => {
+      tbody.innerHTML = `<tr><td colspan="7">Chyba pri načítaní dát: ${err.message}</td></tr>`;
+    });
 </script>
 
 </body>
