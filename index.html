@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poker Menáž</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <h1>Poker Menáž</h1>
+  <p class="sub">Výsledky jednotlivých hracích večerov</p>
+
+  <nav>
+    <a href="index.html" class="active">Výsledky</a>
+    <a href="rebricek.html">Rebríček hráčov</a>
+  </nav>
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Dátum</th>
+          <th>1. miesto</th>
+          <th>2. miesto</th>
+          <th>3. miesto</th>
+          <th class="num">Bank</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <footer>Aktualizuje sa úpravou súboru data.js</footer>
+</div>
+
+<script src="data.js"></script>
+<script>
+  const tbody = document.getElementById('rows');
+  const sorted = [...weeks].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  function formatEUR(n){ return n.toLocaleString('sk-SK') + ' €'; }
+  function formatDate(dateStr){
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('sk-SK', { day: 'numeric', month: 'numeric', year: 'numeric' });
+  }
+
+  sorted.forEach(week => {
+    const get = rank => week.results.find(r => r.place === rank);
+    const p1 = get(1), p2 = get(2), p3 = get(3);
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${formatDate(week.date)}</td>
+      <td>${p1 ? `${p1.name} <span class="gold">(${formatEUR(p1.prize)})</span>` : '-'}</td>
+      <td>${p2 ? `${p2.name} (${formatEUR(p2.prize)})` : '-'}</td>
+      <td>${p3 ? `${p3.name} (${formatEUR(p3.prize)})` : '-'}</td>
+      <td class="num">${formatEUR(week.pot)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+</script>
+
+</body>
+</html>
