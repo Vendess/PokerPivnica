@@ -7,10 +7,19 @@
 // 3. Skopíruj odkaz a vlož ho nižšie do SHEET_CSV_URL
 // ============================================================
 
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRMylc1_pDxRYj1YbYjGnk9OeBa2f2coxDthOCFoc5Nn0eCVV_QAldXBOrQTV3J8Ef8Ok2JpU4kjz9A/pub?output=csv";
+const SHEET_CSV_URL = "PASTE_YOUR_PUBLISHED_CSV_LINK_HERE";
 
-// Jednoduchý CSV parser, zvláda aj úvodzovky okolo hodnôt s čiarkou
-function parseCSV(text) {
+// Zistí, či Google Sheets exportoval CSV s čiarkou alebo bodkočiarkou ako oddeľovačom
+// (slovenská lokalizácia zvyčajne používa bodkočiarku, lebo čiarka je desatinná bodka)
+function detectDelimiter(text) {
+  const firstLine = text.split(/\r?\n/)[0] || "";
+  const commas = (firstLine.match(/,/g) || []).length;
+  const semicolons = (firstLine.match(/;/g) || []).length;
+  return semicolons > commas ? ";" : ",";
+}
+
+// Jednoduchý CSV parser, zvláda aj úvodzovky okolo hodnôt s oddeľovačom
+function parseCSV(text, delimiter) {
   const rows = [];
   let row = [];
   let field = "";
@@ -26,7 +35,7 @@ function parseCSV(text) {
       else { field += char; }
     } else {
       if (char === '"') inQuotes = true;
-      else if (char === ',') { row.push(field); field = ""; }
+      else if (char === delimiter) { row.push(field); field = ""; }
       else if (char === '\n' || char === '\r') {
         if (field.length || row.length) { row.push(field); rows.push(row); }
         row = []; field = "";
@@ -36,6 +45,14 @@ function parseCSV(text) {
   }
   if (field.length || row.length) { row.push(field); rows.push(row); }
   return rows.filter(r => r.some(cell => cell.trim() !== ""));
+}
+
+// Prevedie textovú hodnotu čísla na Number, akceptuje aj desatinnú čiarku (napr. "25,5")
+function parseNumber(raw) {
+  if (raw === undefined || raw === null) return 0;
+  const cleaned = raw.trim().replace(",", ".");
+  const n = parseFloat(cleaned);
+  return isNaN(n) ? 0 : n;
 }
 
 // Prijíma dátum vo formáte dd.mm.rrrr (napr. "26.6.2026" alebo "26.06.2026")
@@ -53,7 +70,7 @@ function parseSkDate(raw) {
 
 function rowsToWeeks(rows) {
   const [header, ...body] = rows;
-  const idx = name => header.findIndex(h => h.trim() === name);
+  const idx = name => header.findIndex(h => h.trim().toLowerCase() === name);
 
   const iDate = idx("date"), iPot = idx("pot");
   const i1n = idx("p1_name"), i1p = idx("p1_prize");
@@ -65,11 +82,11 @@ function rowsToWeeks(rows) {
     return {
       date: display,
       sortKey,
-      pot: parseFloat(r[iPot]) || 0,
+      pot: parseNumber(r[iPot]),
       results: [
-        { place: 1, name: r[i1n]?.trim(), prize: parseFloat(r[i1p]) || 0 },
-        { place: 2, name: r[i2n]?.trim(), prize: parseFloat(r[i2p]) || 0 },
-        { place: 3, name: r[i3n]?.trim(), prize: parseFloat(r[i3p]) || 0 }
+        { place: 1, name: r[i1n]?.trim(), prize: parseNumber(r[i1p]) },
+        { place: 2, name: r[i2n]?.trim(), prize: parseNumber(r[i2p]) },
+        { place: 3, name: r[i3n]?.trim(), prize: parseNumber(r[i3p]) }
       ].filter(p => p.name)
     };
   }).filter(w => w.date);
@@ -82,5 +99,9 @@ function loadWeeks() {
       if (!res.ok) throw new Error("Nepodarilo sa načítať dáta zo Sheetu (status " + res.status + ")");
       return res.text();
     })
-    .then(text => rowsToWeeks(parseCSV(text)));
+    .then(text => {
+      const clean = text.replace(/^\uFEFF/, ""); // odstráni BOM znak, ak je prítomný
+      const delimiter = detectDelimiter(clean);
+      return rowsToWeeks(parseCSV(clean, delimiter));
+    });
 }
