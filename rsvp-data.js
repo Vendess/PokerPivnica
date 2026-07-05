@@ -5,7 +5,7 @@
 // "https://poker-rsvp.tvoj-subdomain.workers.dev"
 // ============================================================
 
-const RSVP_API_URL = "PASTE_YOUR_WORKER_URL_HERE";
+const RSVP_API_URL = "https://poker-rsvp-worker.mr-koperson.workers.dev";
 
 function fetchRsvps() {
   return fetch(`${RSVP_API_URL}/rsvp`, { cache: "no-store" })
