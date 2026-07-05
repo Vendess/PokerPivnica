@@ -78,7 +78,7 @@
   const weekLabel = document.getElementById('weekLabel');
   const submitBtn = document.getElementById('submitBtn');
 
-  // Skryje výber dňa, ak niekto zvolí "Nie"
+  // Pri Nie skryje formulár
   form.querySelectorAll('input[name="coming"]').forEach(radio => {
     radio.addEventListener('change', () => {
       dayField.style.display = form.coming.value === "no" ? "none" : "block";
