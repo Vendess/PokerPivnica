@@ -274,6 +274,30 @@ footer{
 .form-msg.success{ color: #1a6b4a; font-weight: 600; }
 .form-msg.error{ color: var(--suit-red); font-weight: 600; }
 
+td.actions{
+  white-space: nowrap;
+}
+
+.mini-btn{
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+  cursor: pointer;
+  margin-right: 6px;
+}
+
+.mini-btn:hover{
+  border-color: var(--gold);
+}
+
+.mini-btn.delete-btn:hover{
+  border-color: var(--suit-red);
+  color: var(--suit-red);
+}
+
 @media (max-width: 480px){
   table{ font-size: 13px; }
   thead th, tbody td{ padding: 8px; }
