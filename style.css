@@ -182,6 +182,98 @@ footer{
   margin-top: 20px;
 }
 
+.rsvp-form{
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+
+.rsvp-form .field{
+  margin-bottom: 16px;
+}
+
+.rsvp-form label{
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.rsvp-form .optional{
+  font-weight: 400;
+  color: var(--text-dim);
+  font-size: 12px;
+}
+
+.rsvp-form input[type="text"]{
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+  background: #fff;
+  color: var(--text);
+  font-family: inherit;
+}
+
+.rsvp-form input[type="text"]:focus{
+  outline: none;
+  border-color: var(--gold);
+}
+
+.radio-row{
+  display: flex;
+  gap: 16px;
+}
+
+.radio-option{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 400;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.radio-option input{
+  accent-color: var(--gold-dark);
+  cursor: pointer;
+}
+
+.rsvp-form button{
+  background: var(--gold);
+  color: #241f14;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rsvp-form button:hover{
+  background: var(--gold-dark);
+  color: #fff;
+}
+
+.rsvp-form button:disabled{
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-msg{
+  font-size: 13px;
+  margin: 10px 0 0;
+  color: var(--text-dim);
+}
+
+.form-msg.success{ color: #1a6b4a; font-weight: 600; }
+.form-msg.error{ color: var(--suit-red); font-weight: 600; }
+
 @media (max-width: 480px){
   table{ font-size: 13px; }
   thead th, tbody td{ padding: 8px; }
