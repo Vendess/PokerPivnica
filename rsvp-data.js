@@ -3,6 +3,7 @@
 // ============================================================
 // Vlož sem URL svojho nasadeného Workera, napr:
 // "https://poker-rsvp.tvoj-subdomain.workers.dev"
+// toto je worker: https://poker-rsvp-worker.mr-koperson.workers.dev
 // ============================================================
 
 const RSVP_API_URL = "https://poker-rsvp-worker.mr-koperson.workers.dev";
