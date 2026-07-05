@@ -11,7 +11,7 @@
 
 <div class="wrap">
   <h1>Poker Pivnica</h1>
-  <p class="sub">Nahlásenie účasti na najbližší poker</p>
+  <p class="sub">Nahlás účasť na najbližší poker</p>
 
   <nav>
     <a href="index.html">Výsledky</a>
@@ -59,6 +59,7 @@
           <th>Príde</th>
           <th>Deň</th>
           <th>Poznámka</th>
+          <th>Akcie</th>
         </tr>
       </thead>
       <tbody id="rows"></tbody>
@@ -89,7 +90,7 @@
     tbody.innerHTML = "";
 
     if (!data.entries || data.entries.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="4">Zatiaľ nikto neodpovedal.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="5">Zatiaľ nikto neodpovedal.</td></tr>`;
       return;
     }
 
@@ -105,17 +106,31 @@
         <td>${entry.coming ? "✅ Áno" : "❌ Nie"}</td>
         <td>${entry.coming ? (entry.day === "stvrtok" ? "Štvrtok" : "Streda") : "-"}</td>
         <td>${entry.note ? entry.note : "-"}</td>
+        <td class="actions">
+          <button type="button" class="mini-btn delete-btn">Zmazať</button>
+        </td>
       `;
+      tr.querySelector('.delete-btn').addEventListener('click', () => removeEntry(entry.name));
       tbody.appendChild(tr);
     });
   }
 
+  function removeEntry(name) {
+    if (!confirm(`Naozaj zmazať odpoveď pre "${name}"?`)) return;
+    deleteRsvp(name)
+      .then(loadRsvps)
+      .catch(err => {
+        formMsg.textContent = "Chyba pri mazaní: " + err.message;
+        formMsg.className = "form-msg error";
+      });
+  }
+
   function loadRsvps() {
-    tbody.innerHTML = `<tr><td colspan="4">Načítavam...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5">Načítavam...</td></tr>`;
     fetchRsvps()
       .then(renderRows)
       .catch(err => {
-        tbody.innerHTML = `<tr><td colspan="4">Chyba pri načítaní: ${err.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5">Chyba pri načítaní: ${err.message}</td></tr>`;
       });
   }
 
