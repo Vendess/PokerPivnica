@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Účasť – Poker Pivnica</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <h1>Poker Pivnica</h1>
+  <p class="sub">Nahlás účasť na najbližší poker</p>
+
+  <nav>
+    <a href="index.html">Výsledky</a>
+    <a href="rebricek.html">Rebríček hráčov</a>
+    <a href="blindy.html">Blindy</a>
+    <a href="ucast.html" class="active">Účasť</a>
+  </nav>
+
+  <form id="rsvpForm" class="rsvp-form">
+    <div class="field">
+      <label for="name">Meno</label>
+      <input type="text" id="name" name="name" required maxlength="40" placeholder="napr. Tomáš">
+    </div>
+
+    <div class="field">
+      <label>Prídeš?</label>
+      <div class="radio-row">
+        <label class="radio-option"><input type="radio" name="coming" value="yes" checked> Áno</label>
+        <label class="radio-option"><input type="radio" name="coming" value="no"> Nie</label>
+      </div>
+    </div>
+
+    <div class="field" id="dayField">
+      <label>Ktorý deň?</label>
+      <div class="radio-row">
+        <label class="radio-option"><input type="radio" name="day" value="streda" checked> Streda</label>
+        <label class="radio-option"><input type="radio" name="day" value="stvrtok"> Štvrtok</label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="note">Poznámka <span class="optional">(voliteľné, napr. meškanie)</span></label>
+      <input type="text" id="note" name="note" maxlength="200" placeholder="napr. prídem o 30 min neskôr">
+    </div>
+
+    <button type="submit" id="submitBtn">Odoslať</button>
+    <p id="formMsg" class="form-msg"></p>
+  </form>
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Meno</th>
+          <th>Príde</th>
+          <th>Deň</th>
+          <th>Poznámka</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <footer id="weekLabel"></footer>
+</div>
+
+<script src="rsvp-data.js"></script>
+<script>
+  const form = document.getElementById('rsvpForm');
+  const tbody = document.getElementById('rows');
+  const dayField = document.getElementById('dayField');
+  const formMsg = document.getElementById('formMsg');
+  const weekLabel = document.getElementById('weekLabel');
+  const submitBtn = document.getElementById('submitBtn');
+
+  // Skryje výber dňa, ak niekto zvolí "Nie"
+  form.querySelectorAll('input[name="coming"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      dayField.style.display = form.coming.value === "no" ? "none" : "block";
+    });
+  });
+
+  function renderRows(data) {
+    weekLabel.textContent = `Aktuálny týždeň: ${data.week}`;
+    tbody.innerHTML = "";
+
+    if (!data.entries || data.entries.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4">Zatiaľ nikto neodpovedal.</td></tr>`;
+      return;
+    }
+
+    const sorted = [...data.entries].sort((a, b) => {
+      if (a.coming !== b.coming) return a.coming ? -1 : 1;
+      return a.name.localeCompare(b.name, 'sk');
+    });
+
+    sorted.forEach(entry => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${entry.name}</td>
+        <td>${entry.coming ? "✅ Áno" : "❌ Nie"}</td>
+        <td>${entry.coming ? (entry.day === "stvrtok" ? "Štvrtok" : "Streda") : "-"}</td>
+        <td>${entry.note ? entry.note : "-"}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function loadRsvps() {
+    tbody.innerHTML = `<tr><td colspan="4">Načítavam...</td></tr>`;
+    fetchRsvps()
+      .then(renderRows)
+      .catch(err => {
+        tbody.innerHTML = `<tr><td colspan="4">Chyba pri načítaní: ${err.message}</td></tr>`;
+      });
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    formMsg.textContent = "Odosielam...";
+    formMsg.className = "form-msg";
+
+    const name = document.getElementById('name').value.trim();
+    const coming = form.coming.value === "yes";
+    const day = form.day.value;
+    const note = document.getElementById('note').value.trim();
+
+    submitRsvp({ name, coming, day, note })
+      .then(() => {
+        formMsg.textContent = "Odoslané, ďakujeme!";
+        formMsg.className = "form-msg success";
+        loadRsvps();
+      })
+      .catch(err => {
+        formMsg.textContent = "Chyba: " + err.message;
+        formMsg.className = "form-msg error";
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+      });
+  });
+
+  loadRsvps();
+</script>
+
+</body>
+</html>
